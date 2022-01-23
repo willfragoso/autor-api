@@ -1,4 +1,4 @@
-package com.examplo.autorapi;
+package com.exemplo.autor;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
