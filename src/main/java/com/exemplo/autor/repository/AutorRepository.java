@@ -25,4 +25,8 @@ public interface AutorRepository extends JpaRepository<Autor, Integer> {
                                  @Param("dataNascimento") Date dataNascimento,
                                  Pageable pageable);
 
+    @Query("SELECT autor FROM Autor AS autor " +
+            "WHERE autor.id = :id ")
+    Autor carregarAutorPorId(@Param("id") Integer id);
+
 }

@@ -33,6 +33,12 @@ public class AutorController {
         return autorService.pesquisarAutores(autorFiltroDTO, pageable);
     }
 
+    @GetMapping("/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    public AutorDTO carregarAutor(@PathVariable("id") Integer id) {
+        return autorService.carregarAutor(id);
+    }
+
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public AutorDTO incluirAutor(@RequestBody AutorDTO autorDTO) {

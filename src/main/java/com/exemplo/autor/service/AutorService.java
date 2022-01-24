@@ -19,6 +19,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
@@ -47,6 +48,38 @@ public class AutorService {
                         .dataNascimento(autor.getDataNascimento())
                         .build()
         );
+    }
+
+    public AutorDTO carregarAutor(Integer idAutor) {
+        Autor autor = autorRepository.carregarAutorPorId(idAutor);
+        List<Livro> listaLivro = livroRepository.recuperarLivrosDoAutor(idAutor);
+        return montarAutorDTO(idAutor, autor, listaLivro);
+    }
+
+    private AutorDTO montarAutorDTO(Integer idAutor, Autor autor, List<Livro> listaLivro) {
+        return AutorDTO.builder()
+                .id(autor.getId())
+                .nome(autor.getNome())
+                .pseudonimo(autor.getPseudonimo())
+                .dataNascimento(autor.getDataNascimento())
+                .livros(montarListaLivroDTO(idAutor, listaLivro))
+                .build();
+    }
+
+    private List<LivroDTO> montarListaLivroDTO(Integer idAutor, List<Livro> listaLivro) {
+        List<LivroDTO> listaLivroDTO = new ArrayList<>();
+        for (Livro livro : listaLivro) {
+            listaLivroDTO.add(
+                    LivroDTO.builder()
+                            .id(livro.getId())
+                            .idAutor(idAutor)
+                            .nome(livro.getNome())
+                            .numeroPaginas(livro.getNumeroPaginas())
+                            .dataPublicacao(livro.getDataPublicacao())
+                            .build()
+            );
+        }
+        return listaLivroDTO;
     }
 
     @Transactional
@@ -215,8 +248,8 @@ public class AutorService {
     public void deletarAutor(Integer id) {
         Optional<Autor> optionalAutor = autorRepository.findById(id);
         if (optionalAutor.isPresent()) {
-            autorRepository.delete(optionalAutor.get());
             livroRepository.deletarTodosLivrosDoAutor(id);
+            autorRepository.delete(optionalAutor.get());
         } else {
             String message = String.format("Nenhum autor com o identificador %d foi encontrado.", id);
             throw new BusinessException(message);
