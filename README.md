@@ -1,10 +1,10 @@
-# Cadastro de Autor
+# AutorApi
 
 O projeto 'Cadastro de Autor' é composto por duas partes:
-- A interface (frontend) construída em [Angular (V13.1.0)](https://angular.io/cli)
+- A interface (AutorWeb) construída em [Angular (V13.1.4)](https://angular.io/cli)
   - Repositório: https://github.com/willfragoso/autor-web.git
 
-- O serviço (backend) construído em [Spring Boot (2.6.3)](https://spring.io/projects/spring-boot)
+- O serviço (AutorApi) construído em [Spring Boot (2.6.3)](https://spring.io/projects/spring-boot)
   - Repositório: https://github.com/willfragoso/autor-api.git
 
 ### Configuração Inicial - Backend
@@ -12,7 +12,7 @@ O projeto 'Cadastro de Autor' é composto por duas partes:
 Para rodar o backend é necessário seguir os seguintes passos:
 
 1) clonar o repositório "autor-api.git"
-2) Executar a instalação das dependências (usando o NPM do Node.js)
+2) Executar a instalação das dependências (usando o Maven)
 
 ```shell
 git clone https://github.com/willfragoso/autor-api.git
@@ -25,8 +25,6 @@ mvn clean package
 ```shell
 docker-compose -f D:\Temp\autor-api\database\docker-compose.yml up -d
 ```
-
-
 
 ### Subindo o projeto
 
