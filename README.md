@@ -23,7 +23,7 @@ mvn clean package
 3) Criar o container docker, contendo uma imagem banco de dados (MySQL - última versão) através da execução do comando abaixo:
 
 ```shell
-docker-compose -f D:\Temp\autor-api\database\docker-compose.yml up -d
+docker-compose -f <DIRETORIO_PROJETO>\autor-api\database\docker-compose.yml up -d
 ```
 
 ### Subindo o projeto
