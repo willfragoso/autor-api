@@ -22,21 +22,21 @@ import java.util.Objects;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(schema = "SCHEMA_AUTOR", name = "AUTOR")
+@Table(schema = "schema_autor", name = "autor")
 public class Autor {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "ID")
+    @Column(name = "id")
     private Integer id;
 
-    @Column(name = "NOME", length = 50)
+    @Column(name = "nome", length = 50)
     private String nome;
 
-    @Column(name = "PAIS_ORIGEM", length = 50)
-    private String paisOrigem;
+    @Column(name = "pseudonimo", length = 50)
+    private String pseudonimo;
 
-    @Column(name = "DATA_NASCIMENTO")
+    @Column(name = "data_nascimento")
     private Date dataNascimento;
 
     @Override

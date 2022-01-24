@@ -1,0 +1,12 @@
+version: "2"
+
+services:
+  mysql:
+    restart: always
+    image: mysql:latest
+    container_name: my-sql-latest
+    environment:
+      - MYSQL_DATABASE=schema_autor
+      - MYSQL_ROOT_PASSWORD=root
+    ports:
+      - 33080:3306

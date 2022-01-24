@@ -27,26 +27,26 @@ import java.util.Objects;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(schema = "SCHEMA_AUTOR", name = "LIVRO")
+@Table(schema = "schema_autor", name = "livro")
 public class Livro {
     @Id
     @EqualsAndHashCode.Include
-    @Column(name = "ID")
+    @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "ID_AUTOR")
+    @JoinColumn(name = "id_autor")
     @ToString.Exclude
     private Autor autor;
 
-    @Column(name = "NOME")
+    @Column(name = "nome")
     private String nome;
 
-    @Column(name = "NUMERO_PAGINAS")
+    @Column(name = "numero_paginas")
     private Integer numeroPaginas;
 
-    @Column(name = "DATA_PUBLICACAO")
+    @Column(name = "data_publicacao")
     private Date dataPublicacao;
 
     @Override

@@ -16,8 +16,8 @@ public interface AutorRepository extends JpaRepository<Autor, Integer> {
     @Query("SELECT autor FROM Autor AS autor " +
             "WHERE ( 1 = 1 ) " +
             "AND ( autor.id = :id OR :id IS NULL ) " +
-            "AND ( autor.nome = :nome OR :nome IS NULL ) " +
-            "AND ( autor.paisOrigem = :paisOrigem OR :paisOrigem IS NULL ) " +
+            "AND ( autor.nome LIKE :nome OR :nome IS NULL ) " +
+            "AND ( autor.pseudonimo LIKE :paisOrigem OR :paisOrigem IS NULL ) " +
             "AND ( autor.dataNascimento = :dataNascimento OR :dataNascimento IS NULL ) ")
     Page<Autor> pesquisarAutores(@Param("id") Integer id,
                                  @Param("nome") String nome,

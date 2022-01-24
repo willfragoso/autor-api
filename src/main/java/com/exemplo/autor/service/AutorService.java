@@ -35,15 +35,15 @@ public class AutorService {
                                            @PageableDefault(size = 5) Pageable pageable) {
         Page<Autor> autorPage = autorRepository.pesquisarAutores(
                 autorFiltroDTO.getId(),
-                autorFiltroDTO.getNome(),
-                autorFiltroDTO.getPaisOrigem(),
+                StringUtils.isAllBlank(autorFiltroDTO.getNome()) ? autorFiltroDTO.getNome() : "%" + autorFiltroDTO.getNome() + "%",
+                StringUtils.isAllBlank(autorFiltroDTO.getPseudonimo()) ? autorFiltroDTO.getPseudonimo() : "%" + autorFiltroDTO.getPseudonimo() + "%",
                 autorFiltroDTO.getDataNascimento(),
                 pageable);
         return autorPage.map(
                 autor -> AutorDTO.builder()
                         .id(autor.getId())
                         .nome(autor.getNome())
-                        .paisOrigem(autor.getPaisOrigem())
+                        .pseudonimo(autor.getPseudonimo())
                         .dataNascimento(autor.getDataNascimento())
                         .build()
         );
@@ -52,10 +52,11 @@ public class AutorService {
     @Transactional
     public AutorDTO incluirAutor(AutorDTO autorDTO) {
         validarTamanhoCampos(autorDTO);
+        validarPreenchimentoCamposObrigatorios(autorDTO, Boolean.FALSE);
         Autor autor = Autor.builder()
                 .id(null)
                 .nome(autorDTO.getNome())
-                .paisOrigem(autorDTO.getPaisOrigem())
+                .pseudonimo(autorDTO.getPseudonimo())
                 .dataNascimento(autorDTO.getDataNascimento())
                 .build();
         autorRepository.save(autor);
@@ -73,8 +74,8 @@ public class AutorService {
             if (!StringUtils.isAllBlank(autorDTO.getNome()) && autorDTO.getNome().length() > 50) {
                 throw new InvalidFieldSizeException("O nome do autor deve ter no máximo 50 caracteres.");
             }
-            if (!StringUtils.isAllBlank(autorDTO.getPaisOrigem()) && autorDTO.getPaisOrigem().length() > 50) {
-                throw new InvalidFieldSizeException("O nome do país de origem do autor  deve ter no máximo 50 caracteres.");
+            if (!StringUtils.isAllBlank(autorDTO.getPseudonimo()) && autorDTO.getPseudonimo().length() > 50) {
+                throw new InvalidFieldSizeException("O pseudônimo do autor  deve ter no máximo 50 caracteres.");
             }
             if (autorDTO.getLivros() != null) {
                 for (LivroDTO livroDTO : autorDTO.getLivros()) {
@@ -86,24 +87,50 @@ public class AutorService {
         }
     }
 
+    private void validarPreenchimentoCamposObrigatorios(AutorDTO autorDTO, boolean isAlteracao) {
+        if (isAlteracao) {
+            if (autorDTO.getId() == null) {
+                throw new BusinessException("É obrigatório informar o identificador do autor.");
+            }
+        }
+        if (StringUtils.isAllBlank(autorDTO.getNome())) {
+            throw new BusinessException("É obrigatório informar o nome do autor.");
+        }
+        if (StringUtils.isAllBlank(autorDTO.getPseudonimo())) {
+            throw new BusinessException("É obrigatório informar o pseudônimo do autor.");
+        }
+        if (autorDTO.getDataNascimento() == null) {
+            throw new BusinessException("É obrigatório informar a data de nascimento do autor.");
+        }
+        if (autorDTO.getLivros() != null) {
+            for (LivroDTO livroDTO : autorDTO.getLivros()) {
+                if (StringUtils.isAllBlank(livroDTO.getNome())) {
+                    throw new BusinessException("É obrigatório informar o nome do livro.");
+                }
+                if (livroDTO.getNumeroPaginas() == null) {
+                    throw new BusinessException("É obrigatório informar o número de páginas do livro.");
+                }
+                if (livroDTO.getDataPublicacao() == null) {
+                    throw new BusinessException("É obrigatório informar a data de publicação do livro.");
+                }
+            }
+        }
+    }
+
     @Transactional
     public AutorDTO alterarAutor(AutorDTO autorDTO) {
         Optional<Autor> optionalAutor = autorRepository.findById(autorDTO.getId());
         if (optionalAutor.isPresent()) {
-
             validarTamanhoCampos(autorDTO);
-
+            validarPreenchimentoCamposObrigatorios(autorDTO, Boolean.TRUE);
             validarVinculosAutorLivro(autorDTO);
-
             Autor autor = optionalAutor.get();
             autor.setNome(autorDTO.getNome());
-            autor.setPaisOrigem(autorDTO.getPaisOrigem());
+            autor.setPseudonimo(autorDTO.getPseudonimo());
             autor.setDataNascimento(autorDTO.getDataNascimento());
             autorRepository.save(autor);
-
             List<Livro> livros = livroRepository.recuperarLivrosDoAutor(autor.getId());
             aplicarAlteracoesLivros(autor, livros, autorDTO);
-
             autorDTO.setId(autor.getId());
         } else {
             String message = String.format("Nenhum autor com o identificador %d foi encontrado.", autorDTO.getId());
@@ -115,7 +142,8 @@ public class AutorService {
     private void validarVinculosAutorLivro(AutorDTO autorDTO) {
         if (autorDTO.getLivros() != null) {
             for (LivroDTO livroDTO : autorDTO.getLivros()) {
-                if (!autorDTO.getId().equals(livroDTO.getIdAutor())) {
+                if (livroDTO.getIdAutor() != null
+                        && !autorDTO.getId().equals(livroDTO.getIdAutor())) {
                     throw new BusinessException("Só é permitido alterar os livros do mesmo autor. Por favor, verifique os vínculos dos cadastros.");
                 }
             }
@@ -193,6 +221,10 @@ public class AutorService {
             String message = String.format("Nenhum autor com o identificador %d foi encontrado.", id);
             throw new BusinessException(message);
         }
+    }
+
+    public long recuperarQtdeTotalRegistros() {
+        return autorRepository.count();
     }
 
 }
