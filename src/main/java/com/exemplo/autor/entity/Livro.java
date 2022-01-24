@@ -2,11 +2,9 @@ package com.exemplo.autor.entity;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import lombok.ToString;
 import org.hibernate.Hibernate;
 
 import javax.persistence.Column;
@@ -29,15 +27,14 @@ import java.util.Objects;
 @Entity
 @Table(schema = "schema_autor", name = "livro")
 public class Livro {
+
     @Id
-    @EqualsAndHashCode.Include
-    @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
     private Integer id;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_autor")
-    @ToString.Exclude
     private Autor autor;
 
     @Column(name = "nome")
